@@ -1,32 +1,32 @@
-CFLAGS=-g -Wall
-CC=gcc
-AR=ar
-RANLIB=ranlib
+CFLAGS = -Wall -Wextra -fPIC -Og -ggdb3 -MMD
+CC = gcc
 LIBS=-L./ -lcgic
 
-all: libcgic.a cgictest.cgi capture
+all: libcgic.so.2.0.8 cgictest.cgi capture
 
-install: libcgic.a
-	cp libcgic.a /usr/local/lib
+install: libcgic.so.2.0.8
+	cp libcgic.so.2.0.8 /usr/local/lib
+	ln -sfv /usr/local/lib/libcgic.so.2.0.8 /usr/local/lib/libcgic.so.2
+	ln -sfv /usr/local/lib/libcgic.so.2 /usr/local/lib/libcgic.so
 	cp cgic.h /usr/local/include
-	@echo libcgic.a is in /usr/local/lib. cgic.h is in /usr/local/include.
+	@echo libcgic.so.2.0.8 in /usr/local/lib. cgic.h is in /usr/local/include.
 
-libcgic.a: cgic.o cgic.h
-	rm -f libcgic.a
-	$(AR) rc libcgic.a cgic.o
-	$(RANLIB) libcgic.a
+libcgic.so.2.0.8: cgic.o cgic.h
+	rm -f libcgic.so.2.0.8
+	gcc $(CFLAGS) -c cgic.c
+	gcc $(CFLAGS) -shared -Wl,-soname,libcgic.so.2 -o libcgic.so.2.0.8 cgic.o
 
 #mingw32 and cygwin users: replace .cgi with .exe
 
-cgictest.cgi: cgictest.o libcgic.a
-	gcc cgictest.o -o cgictest.cgi ${LIBS}
+cgictest.cgi: cgictest.o libcgic.so.2.0.8
+	gcc -fPIC cgictest.o -o cgictest.cgi ${LIBS}
 
-capture: capture.o libcgic.a
-	gcc capture.o -o capture ${LIBS}
+capture: capture.o libcgic.so.2.0.8
+	gcc -fPIC capture.o -o capture ${LIBS}
 
 clean:
-	rm -f *.o *.a cgictest.cgi capture cgicunittest
-
+	rm -f *.o libcgic.so.2.0.8 cgictest.cgi capture cgicunittest
+	
 test:
-	gcc -D UNIT_TEST=1 cgic.c -o cgicunittest
+	gcc -fPIC -D UNIT_TEST=1 cgic.c -o cgicunittest
 	./cgicunittest
