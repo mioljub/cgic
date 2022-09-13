@@ -13,7 +13,6 @@ install: libcgic.so.2.0.8
 
 libcgic.so.2.0.8: cgic.o cgic.h
 	rm -f libcgic.so.2.0.8
-	gcc $(CFLAGS) -c cgic.c
 	gcc $(CFLAGS) -shared -Wl,-soname,libcgic.so.2 -o libcgic.so.2.0.8 cgic.o
 
 #mingw32 and cygwin users: replace .cgi with .exe
