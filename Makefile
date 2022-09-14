@@ -14,6 +14,8 @@ install: libcgic.so.2.0.8
 libcgic.so.2.0.8:
 	gcc $(CFLAGS) -c cgic.c
 	gcc $(CFLAGS) -shared -Wl,-soname,libcgic.so.2 -o libcgic.so.2.0.8 cgic.o
+	ln -sfv libcgic.so.2.0.8 libcgic.so.2
+	ln -sfv libcgic.so.2 libcgic.so
 
 #mingw32 and cygwin users: replace .cgi with .exe
 
@@ -24,8 +26,8 @@ capture: capture.o libcgic.so.2.0.8
 	gcc $(CFLAGS) capture.o -o capture ${LIBS}
 
 clean:
-	rm -f *.o libcgic.so.2.0.8 cgictest.cgi capture cgicunittest
+	rm -f *.d *.o libcgic.so.2.0.8 *.so.2 *.so cgictest.cgi capture cgicunittest
 	
 test:
-	gcc -fPIC -D UNIT_TEST=1 cgic.c -o cgicunittest
+	gcc $(CFLAGS) -DUNIT_TEST=1 cgic.c -o cgicunittest
 	./cgicunittest
